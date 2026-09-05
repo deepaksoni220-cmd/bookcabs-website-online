@@ -40,6 +40,7 @@ export function Footer() {
             <li><Link href="/connect-us" style={{ color: 'inherit', textDecoration: 'none' }}>Corporate accounts</Link></li>
             <li><Link href="/connect-us" style={{ color: 'inherit', textDecoration: 'none' }}>Travel agencies</Link></li>
             <li><Link href="/connect-us" style={{ color: 'inherit', textDecoration: 'none' }}>Event transportation</Link></li>
+            <li><Link href="/connect-us" style={{ color: 'inherit', textDecoration: 'none' }}>For Career</Link></li>
           </ul>
         </div>
 
