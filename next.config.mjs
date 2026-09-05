@@ -1,0 +1,30 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  reactStrictMode: true,
+  images: {
+    unoptimized: true,
+  },
+  outputFileTracingRoot: __dirname,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.(glb|gltf)$/,
+      type: 'asset/resource',
+    });
+    return config;
+  },
+};
+
+export default nextConfig;
