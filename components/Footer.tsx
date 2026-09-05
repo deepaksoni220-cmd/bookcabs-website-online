@@ -2,8 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === '/quote') {
+    return null;
+  }
   return (
     <footer className="Footer_footer__6mFqH" style={{ background: '#0F1319', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '60px 48px 40px', color: '#fff' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '48px' }}>

@@ -269,33 +269,58 @@ Please send me the quote and chauffeur availability. Thank you!`;
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#fbf8f2', color: '#0f1319', fontFamily: 'Geist, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+    <div style={{ minHeight: '100vh', width: '100%', maxWidth: '100vw', overflowX: 'hidden', backgroundColor: '#fbf8f2', color: '#0f1319', fontFamily: 'Geist, -apple-system, BlinkMacSystemFont, sans-serif' }}>
       <style>{`
+        html, body {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+          width: 100% !important;
+        }
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
         .quote-page-wrapper {
           max-width: 1360px;
+          width: 100%;
+          box-sizing: border-box;
           margin: 0 auto;
           padding: 24px 20px 80px;
+          overflow-x: hidden;
         }
         .quote-main-layout {
           display: grid;
           grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
           gap: 32px;
           align-items: start;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
         }
         .desktop-vehicle-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 20px;
+          width: 100%;
+          box-sizing: border-box;
         }
         .mobile-carousel-container {
           display: none;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
         }
         .mobile-map-top {
           display: none;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
           margin-bottom: 20px;
         }
         .desktop-map-preview {
           display: block;
+          width: 100%;
+          box-sizing: border-box;
         }
         .mobile-bottom-bar {
           display: none;
@@ -312,14 +337,19 @@ Please send me the quote and chauffeur availability. Thank you!`;
           position: sticky;
           top: 0;
           z-index: 100;
+          width: 100%;
+          max-width: 100vw;
+          box-sizing: border-box;
         }
         .quote-header-inner {
           max-width: 1360px;
+          width: 100%;
           margin: 0 auto;
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 16px;
+          box-sizing: border-box;
         }
         .quote-header-left {
           display: flex;
@@ -374,11 +404,18 @@ Please send me the quote and chauffeur availability. Thank you!`;
             font-size: 12.5px !important;
           }
           .quote-page-wrapper {
-            padding: 16px 14px 110px;
+            padding: 16px 14px 110px !important;
+            width: 100% !important;
+            max-width: 100vw !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
           }
           .quote-main-layout {
-            display: flex;
-            flex-direction: column;
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
             gap: 20px;
           }
           .desktop-vehicle-grid {
@@ -386,10 +423,17 @@ Please send me the quote and chauffeur availability. Thank you!`;
           }
           .mobile-carousel-container {
             display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
             margin-bottom: 20px;
           }
           .mobile-map-top {
             display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
           }
           .desktop-map-preview {
             display: none !important;
@@ -400,6 +444,9 @@ Please send me the quote and chauffeur availability. Thank you!`;
             bottom: 0;
             left: 0;
             right: 0;
+            width: 100% !important;
+            max-width: 100vw !important;
+            box-sizing: border-box !important;
             background: #ffffff;
             border-top: 1px solid #e3e7eb;
             padding: 12px 14px;
@@ -414,6 +461,8 @@ Please send me the quote and chauffeur availability. Thank you!`;
           }
           .mobile-location-summary-card {
             display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
           }
           .breadcrumb-steps {
             display: none !important;
@@ -876,7 +925,7 @@ Please send me the quote and chauffeur availability. Thank you!`;
               background: '#e8ecef',
             }}
           >
-            <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.9 }}>
+            <svg width="100%" height="100%" viewBox="0 0 500 190" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, opacity: 0.9, overflow: 'hidden' }}>
               <rect width="100%" height="100%" fill="#f4f3f0" />
               <path d="M0,40 Q150,60 300,30 T600,50" stroke="#e0e0e0" strokeWidth="8" fill="none" />
               <path d="M0,120 Q200,90 400,140 T800,100" stroke="#ffffff" strokeWidth="12" fill="none" />
@@ -1282,7 +1331,7 @@ Please send me the quote and chauffeur availability. Thank you!`;
                 background: '#e8ecef',
               }}
             >
-              <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.9 }}>
+              <svg width="100%" height="100%" viewBox="0 0 600 240" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, opacity: 0.9, overflow: 'hidden' }}>
                 <rect width="100%" height="100%" fill="#f4f3f0" />
                 <path d="M0,40 Q150,60 300,30 T600,50" stroke="#e0e0e0" strokeWidth="8" fill="none" />
                 <path d="M0,120 Q200,90 400,140 T800,100" stroke="#ffffff" strokeWidth="12" fill="none" />
