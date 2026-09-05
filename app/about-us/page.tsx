@@ -1,9 +1,43 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+const FLEET_TIERS = [
+  { title: 'Business Sedan', img: '/assets/sedan%20png.png', model: 'Mercedes-Benz E-Class, BMW 5 Series', pass: '3 Passengers', bag: '2 Luggage' },
+  { title: 'Business Luxury Cars', img: '/assets/luxury%20png.png', model: 'Mercedes-Benz S-Class, BMW 7 Series', pass: '3 Passengers', bag: '3 Luggage' },
+  { title: 'Luxury SUV', img: '/assets/big%20suv%20png.png', model: 'Audi Q7, Lexus RX, Mercedes GLE', pass: '4 Passengers', bag: '4 Luggage' },
+  { title: 'Business Van', img: '/assets/big%20car%20png.png', model: 'Mercedes-Benz V-Class, Valente', pass: '7 Passengers', bag: '7 Luggage' },
+];
+
 export default function AboutUsPage() {
+  const [activeFleetIdx, setActiveFleetIdx] = useState(0);
+  const fleetScrollRef = useRef<HTMLDivElement>(null);
+
+  const handleFleetScroll = () => {
+    if (fleetScrollRef.current) {
+      const scrollLeft = fleetScrollRef.current.scrollLeft;
+      const card = fleetScrollRef.current.firstElementChild as HTMLElement | null;
+      const cardWidth = card ? card.offsetWidth + 16 : 280;
+      const newIdx = Math.round(scrollLeft / cardWidth);
+      if (newIdx >= 0 && newIdx < FLEET_TIERS.length) {
+        setActiveFleetIdx(newIdx);
+      }
+    }
+  };
+
+  const scrollToFleet = (idx: number) => {
+    if (fleetScrollRef.current) {
+      const card = fleetScrollRef.current.firstElementChild as HTMLElement | null;
+      const cardWidth = card ? card.offsetWidth + 16 : 280;
+      fleetScrollRef.current.scrollTo({
+        left: idx * cardWidth,
+        behavior: 'smooth',
+      });
+      setActiveFleetIdx(idx);
+    }
+  };
   return (
     <main className="Layout_main__h283P" style={{ background: '#f8fafc', color: '#0F1319', minHeight: '100vh', paddingTop: '90px' }}>
       
@@ -186,7 +220,7 @@ export default function AboutUsPage() {
       </section>
 
       {/* ── 4. FLEET TIERS OVERVIEW (CLEAN LIGHT CARDS) ──────────────────── */}
-      <section style={{ padding: '80px 24px', background: '#f1f5f9', borderTop: '1px solid #e2e8f0' }}>
+      <section style={{ padding: '80px 24px', background: '#f1f5f9', borderTop: '1px solid #e2e8f0', overflow: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
           <span style={{ color: '#0F63BD', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>
             OUR DISTINGUISHED FLEET
@@ -198,15 +232,52 @@ export default function AboutUsPage() {
             Choose from our premium selection of luxury vehicles, equipped with complimentary Wi-Fi, bottled water, and phone chargers.
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
-            {[
-              { title: 'Business Sedan', img: '/assets/sedan%20png.png', model: 'Mercedes-Benz E-Class, BMW 5 Series', pass: '3 Passengers', bag: '2 Luggage' },
-              { title: 'Business Luxury Cars', img: '/assets/luxury%20png.png', model: 'Mercedes-Benz S-Class, BMW 7 Series', pass: '3 Passengers', bag: '3 Luggage' },
-              { title: 'Luxury SUV', img: '/assets/big%20suv%20png.png', model: 'Audi Q7, Lexus RX, Mercedes GLE', pass: '4 Passengers', bag: '4 Luggage' },
-              { title: 'Business Van', img: '/assets/big%20car%20png.png', model: 'Mercedes-Benz V-Class, Valente', pass: '7 Passengers', bag: '7 Luggage' },
-            ].map((tier, index) => (
+          <style>{`
+            .about-fleet-container {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+              gap: 24px;
+              width: 100%;
+              box-sizing: border-box;
+            }
+            .about-swipe-indicator {
+              display: none;
+            }
+            @media (max-width: 768px) {
+              .about-fleet-container {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+                gap: 16px !important;
+                padding: 12px 16px 20px !important;
+                margin: 0 -24px !important;
+                scrollbar-width: none !important;
+              }
+              .about-fleet-container::-webkit-scrollbar {
+                display: none !important;
+              }
+              .about-fleet-card {
+                flex: 0 0 82% !important;
+                max-width: 320px !important;
+                scroll-snap-align: center !important;
+                box-sizing: border-box !important;
+              }
+              .about-swipe-indicator {
+                display: flex !important;
+              }
+            }
+          `}</style>
+
+          <div
+            ref={fleetScrollRef}
+            onScroll={handleFleetScroll}
+            className="about-fleet-container"
+          >
+            {FLEET_TIERS.map((tier, index) => (
               <div
                 key={index}
+                className="about-fleet-card"
                 style={{
                   background: '#ffffff',
                   borderRadius: '16px',
@@ -229,6 +300,27 @@ export default function AboutUsPage() {
                   <span>🧳 {tier.bag}</span>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Swipe indicator for mobile */}
+          <div className="about-swipe-indicator" style={{ alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
+            {FLEET_TIERS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => scrollToFleet(idx)}
+                aria-label={`Slide ${idx + 1}`}
+                style={{
+                  width: activeFleetIdx === idx ? '22px' : '8px',
+                  height: '8px',
+                  borderRadius: '999px',
+                  backgroundColor: activeFleetIdx === idx ? '#0F63BD' : '#cbd5e1',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              />
             ))}
           </div>
 
