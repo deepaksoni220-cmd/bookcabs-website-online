@@ -1,8 +1,50 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+
+function AnimatedCounter({ end, suffix = '', duration = 1600 }: { end: number; suffix?: string; duration?: number }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !started.current) {
+          started.current = true;
+          const startTime = performance.now();
+          const step = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.round(ease * end));
+            if (progress < 1) {
+              requestAnimationFrame(step);
+            } else {
+              setCount(end);
+            }
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [end, duration]);
+
+  return (
+    <span ref={ref}>
+      {count}{suffix}
+    </span>
+  );
+}
 
 const FLEET_TIERS = [
   { title: 'Business Sedan', img: '/assets/sedan%20png.png', model: 'Mercedes-Benz E-Class, BMW 5 Series', pass: '3 Passengers', bag: '2 Luggage' },
@@ -117,15 +159,52 @@ export default function AboutUsPage() {
 
       {/* ── 2. KEY STATS (LIGHT CARDS) ─────────────────────────────────── */}
       <section style={{ padding: '50px 24px 70px', background: '#ffffff', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+        <style>{`
+          .about-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+          }
+          @media (max-width: 860px) {
+            .about-stats-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+              gap: 16px !important;
+            }
+          }
+          @media (max-width: 520px) {
+            .about-stats-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+              gap: 12px !important;
+            }
+            .about-stat-card {
+              padding: 20px 12px !important;
+              border-radius: 14px !important;
+            }
+            .about-stat-num {
+              font-size: 30px !important;
+            }
+            .about-stat-title {
+              font-size: 14px !important;
+              margin-bottom: 4px !important;
+            }
+            .about-stat-desc {
+              font-size: 11.5px !important;
+              line-height: 1.4 !important;
+            }
+          }
+        `}</style>
+        <div className="about-stats-grid">
           {[
-            { num: '100%', title: 'On-Time Pickups', desc: 'Real-time flight tracking & proactive Melbourne dispatch.' },
-            { num: '60 Min', title: 'Airport Wait Time', desc: 'Complimentary grace period for delayed domestic & intl arrivals.' },
-            { num: '24/7', title: 'VIP Dispatch', desc: 'Dedicated concierge team available day and night.' },
-            { num: '5★', title: 'Rated Chauffeurs', desc: 'Accredited, fully licensed, suited, and immaculately presented.' },
+            { end: 100, suffix: '%', title: 'On-Time Pickups', desc: 'Real-time flight tracking & proactive Melbourne dispatch.' },
+            { end: 60, suffix: ' Min', title: 'Airport Wait Time', desc: 'Complimentary grace period for delayed domestic & intl arrivals.' },
+            { end: 24, suffix: '/7', title: 'VIP Dispatch', desc: 'Dedicated concierge team available day and night.' },
+            { end: 5, suffix: '★', title: 'Rated Chauffeurs', desc: 'Accredited, fully licensed, suited, and immaculately presented.' },
           ].map((stat, idx) => (
             <div
               key={idx}
+              className="about-stat-card"
               style={{
                 background: '#f8fafc',
                 border: '1px solid #e2e8f0',
@@ -136,13 +215,13 @@ export default function AboutUsPage() {
                 transition: 'all 0.2s ease',
               }}
             >
-              <div style={{ fontSize: '38px', fontWeight: 800, color: '#0F63BD', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: '6px' }}>
-                {stat.num}
+              <div className="about-stat-num" style={{ fontSize: '38px', fontWeight: 800, color: '#0F63BD', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: '6px' }}>
+                <AnimatedCounter end={stat.end} suffix={stat.suffix} />
               </div>
-              <div style={{ fontSize: '17px', fontWeight: 700, color: '#0F1319', marginBottom: '8px' }}>
+              <div className="about-stat-title" style={{ fontSize: '17px', fontWeight: 700, color: '#0F1319', marginBottom: '8px' }}>
                 {stat.title}
               </div>
-              <div style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.5 }}>
+              <div className="about-stat-desc" style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.5 }}>
                 {stat.desc}
               </div>
             </div>
@@ -197,22 +276,56 @@ export default function AboutUsPage() {
               </p>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ color: '#0F63BD', fontWeight: 700, fontSize: '14px', marginBottom: '4px' }}>Airport Transfers</div>
-                  <div style={{ color: '#64748b', fontSize: '12px' }}>Direct terminal pickups with luggage assistance.</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ color: '#0F63BD', fontWeight: 700, fontSize: '14px', marginBottom: '4px' }}>Corporate Accounts</div>
-                  <div style={{ color: '#64748b', fontSize: '12px' }}>Consolidated monthly invoicing & dedicated manager.</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ color: '#0F63BD', fontWeight: 700, fontSize: '14px', marginBottom: '4px' }}>By The Hour</div>
-                  <div style={{ color: '#64748b', fontSize: '12px' }}>Chauffeur on standby for continuous multi-stop travel.</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ color: '#0F63BD', fontWeight: 700, fontSize: '14px', marginBottom: '4px' }}>Winery & Events</div>
-                  <div style={{ color: '#64748b', fontSize: '12px' }}>Bespoke tours in Victoria’s premier wine regions.</div>
-                </div>
+                {[
+                  {
+                    title: 'Airport Transfers',
+                    desc: 'Direct terminal pickups with luggage assistance.',
+                    icon: (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F63BD" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    title: 'Corporate Accounts',
+                    desc: 'Consolidated monthly invoicing & dedicated manager.',
+                    icon: (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F63BD" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    title: 'By The Hour',
+                    desc: 'Chauffeur on standby for continuous multi-stop travel.',
+                    icon: (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F63BD" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    title: 'Winery & Events',
+                    desc: 'Bespoke tours in Victoria’s premier wine regions.',
+                    icon: (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F63BD" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M8 22h8"/>
+                        <path d="M12 15v7"/>
+                        <path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/>
+                      </svg>
+                    ),
+                  },
+                ].map((item, i) => (
+                  <div key={i} style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', flexShrink: 0 }}>
+                      {item.icon}
+                    </div>
+                    <div style={{ color: '#0F63BD', fontWeight: 700, fontSize: '14px', marginBottom: '4px' }}>{item.title}</div>
+                    <div style={{ color: '#64748b', fontSize: '12px', lineHeight: 1.45 }}>{item.desc}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
