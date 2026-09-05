@@ -6,13 +6,23 @@ import { usePathname } from 'next/navigation';
 
 export function Footer() {
   const pathname = usePathname();
+  const isQuotePage = pathname === '/quote';
 
-  if (pathname === '/quote') {
-    return null;
-  }
   return (
-    <footer className="Footer_footer__6mFqH" style={{ background: '#0F1319', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '60px 48px 40px', color: '#fff' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '48px' }}>
+    <footer
+      className="Footer_footer__6mFqH"
+      style={{
+        background: '#0F1319',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+        padding: isQuotePage ? '60px 48px 110px' : '60px 48px 40px',
+        color: '#fff',
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
+      }}
+    >
+      <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '48px', width: '100%', boxSizing: 'border-box' }}>
         <div>
           <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Services</h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>
